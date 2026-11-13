@@ -77,6 +77,15 @@ docker pull paddlepaddle/paddle:latest-dev
 docker pull docker.paddlepaddlehub.com/paddle:latest-dev
 ```
 
+Apple Silicon（M1/M2 等 ARM 芯片）的 Mac 上，上述镜像为 amd64 架构，需要通过模拟运行。Docker Desktop 默认使用 QEMU 模拟，
+运行 `run_server` 时可能在分词（`method_wordseg`）阶段异常退出，并报
+`Assertion failed: p_rcu_reader->depth != 0 (/qemu/include/qemu/rcu.h: rcu_read_unlock: 101)`。
+这是 QEMU 自身的问题，建议：
+- 在 Docker Desktop → Settings → General 中开启 "Use Rosetta for x86_64/amd64 emulation on Apple Silicon"，重启 Docker 后以 `--platform linux/amd64` 启动容器；
+- 或直接在 x86_64 Linux 机器上编译运行。
+
+AnyQ 依赖的 Paddle 0.14 与 MKLML 不支持在 ARM 上原生编译。
+
 ## Demo
 
 构建索引、配置
